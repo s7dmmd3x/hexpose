@@ -83,3 +83,15 @@ def export(result: ScanResult, fmt: str, redact: bool = True, mode: str = "parti
     if handler is None:
         raise ValueError(f"Unknown export format: {fmt!r}. Choose from {list(FORMAT_HANDLERS)}.")
     return handler(result, redact, mode)
+
+
+def export_all(
+    result: ScanResult,
+    redact: bool = True,
+    mode: str = "partial",
+) -> dict[str, str]:
+    """Export *result* in all supported formats.
+
+    Returns a dict mapping each format name to its serialised string.
+    """
+    return {fmt: handler(result, redact, mode) for fmt, handler in FORMAT_HANDLERS.items()}
