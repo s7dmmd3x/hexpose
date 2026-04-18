@@ -92,6 +92,6 @@ def export_all(
 ) -> dict[str, str]:
     """Export *result* in all supported formats.
 
-    Returns a dict mapping each format name to its serialised string.
+    Returns a mapping of format name to serialised string.
     """
     return {fmt: handler(result, redact, mode) for fmt, handler in FORMAT_HANDLERS.items()}
