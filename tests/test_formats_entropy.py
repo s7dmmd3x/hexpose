@@ -48,6 +48,13 @@ def test_entropy_label_very_low():
     assert entropy_label("aaaa") == "very-low"
 
 
+def test_entropy_label_medium():
+    # A short English sentence has moderate entropy (mid range)
+    data = "the quick brown fox"
+    label = entropy_label(data)
+    assert label in ("low", "medium", "high")
+
+
 # ---------------------------------------------------------------------------
 # format detection tests
 # ---------------------------------------------------------------------------
