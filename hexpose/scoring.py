@@ -68,3 +68,16 @@ def score_result(result, watchlist=None) -> list:
         wl = watchlist.contains(match.value) if watchlist else False
         scored.append(score_match(match, watchlisted=wl))
     return scored
+
+
+def top_scored(scored: list, n: int = 10) -> list:
+    """Return the top-n ScoredMatch entries sorted by final_score descending.
+
+    Args:
+        scored: A list of ScoredMatch instances, e.g. from score_result().
+        n: Maximum number of results to return.
+
+    Returns:
+        A list of at most n ScoredMatch instances with the highest scores.
+    """
+    return sorted(scored, key=lambda s: s.final_score, reverse=True)[:n]
