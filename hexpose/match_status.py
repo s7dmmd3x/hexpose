@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Iterable, List
+from typing import Dict, Iterable, List
 
 from hexpose.scanner import Match, ScanResult
 
@@ -67,3 +67,18 @@ def filter_by_status(
     status: Status,
 ) -> List[StatusedMatch]:
     return [s for s in statused if s.status == status]
+
+
+def group_by_status(
+    statused: Iterable[StatusedMatch],
+) -> Dict[Status, List[StatusedMatch]]:
+    """Group *statused* matches by their status.
+
+    Returns a dict mapping each :class:`Status` value to the list of
+    :class:`StatusedMatch` objects that carry that status.  Statuses with no
+    matches are omitted from the result.
+    """
+    groups: Dict[Status, List[StatusedMatch]] = {}
+    for sm in statused:
+        groups.setdefault(sm.status, []).append(sm)
+    return groups
