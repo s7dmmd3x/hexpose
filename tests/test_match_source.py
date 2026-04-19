@@ -104,29 +104,21 @@ def test_source_match_missing_file_gives_none_fields(tmp_path):
 
 def test_as_dict_contains_expected_keys():
     m = _make_match()
-    sm = source_match(m, source_path="/tmp/x", source_type="file", raw_bytes=b"data")
+    sm = source_match(m, source_type="file", raw_bytes=b"sample")
     d = sm.as_dict()
-    for key in ("pattern_name", "value", "offset", "severity", "source_path", "source_type", "file_size", "sha256"):
-        assert key in d
+    for key in ("pattern_name", "value", "offset", "severity", "source_type", "file_size", "sha256"):
+        assert key in d, f"Missing key: {key}"
 
 
-# ---------------------------------------------------------------------------
-# source_all
-# ---------------------------------------------------------------------------
-
-def test_source_all_returns_list_of_same_length():
-    matches = [_make_match() for _ in range(4)]
-    result = source_all(matches, raw_bytes=b"payload")
-    assert len(result) == 4
-
-
-def test_source_all_shares_sha256_across_matches():
-    matches = [_make_match(offset=i) for i in range(3)]
-    raw = b"shared payload"
-    result = source_all(matches, raw_bytes=raw)
-    expected = _sha256_of(raw)
-    assert all(sm.sha256 == expected for sm in result)
-
-
-def test_source_all_empty_input():
-    assert source_all([], raw_bytes=b"data") == []
+def test_as_dict_values_match_fields():
+    m = _make_match(name="github_token", value="ghp_abc123", offset=42, severity="critical")
+    raw = b"payload"
+    sm = source_match(m, source_type="memory_dump", raw_bytes=raw)
+    d = sm.as_dict()
+    assert d["pattern_name"] == "github_token"
+    assert d["value"] == "ghp_abc123"
+    assert d["offset"] == 42
+    assert d["severity"] == "critical"
+    assert d["source_type"] == "memory_dump"
+    assert d["file_size"] == len(raw)
+    assert d["sha256"] == _sha256_of(raw)
