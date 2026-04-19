@@ -45,3 +45,23 @@ def rank_matches(matches: List[Match], entropy_weight: float = 0.4, severity_wei
 def top_n(matches: List[Match], n: int = 10, **kwargs) -> List[RankedMatch]:
     """Return the top-n ranked matches."""
     return rank_matches(matches, **kwargs)[:n]
+
+
+def filter_by_severity(matches: List[RankedMatch], min_severity: str) -> List[RankedMatch]:
+    """Return only ranked matches at or above the given minimum severity level.
+
+    Args:
+        matches: A list of RankedMatch objects to filter.
+        min_severity: Minimum severity string (e.g. ``"medium"``). Matches with
+            a severity weight below this threshold are excluded.
+
+    Returns:
+        Filtered list preserving the existing sort order.
+    """
+    threshold = _SEVERITY_WEIGHT.get(min_severity.lower())
+    if threshold is None:
+        raise ValueError(
+            f"Unknown severity level {min_severity!r}. "
+            f"Valid values: {list(_SEVERITY_WEIGHT.keys())}"
+        )
+    return [r for r in matches if r.severity_weight >= threshold]
