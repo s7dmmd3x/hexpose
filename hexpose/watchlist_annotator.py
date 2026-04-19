@@ -35,3 +35,12 @@ def annotate_result(result: ScanResult, watchlist: Watchlist) -> ScanResult:
 def watchlisted_matches(result: ScanResult, watchlist: Watchlist) -> list[Match]:
     """Return a list of matches from *result* that are on the watchlist."""
     return watchlist.filter_watchlisted(result.matches)
+
+
+def is_annotated(match: Match) -> bool:
+    """Return True if *match* has already been annotated with the watchlist flag.
+
+    Useful for avoiding redundant annotation passes when results are processed
+    through multiple pipeline stages.
+    """
+    return match.metadata is not None and WATCHLIST_KEY in match.metadata
