@@ -62,6 +62,11 @@ def test_ordering_equal():
     assert Severity.from_string("high") == HIGH
 
 
+def test_ordering_full_ascending():
+    """Verify the complete ordering LOW < MEDIUM < HIGH < CRITICAL."""
+    assert LOW < MEDIUM < HIGH < CRITICAL
+
+
 # ---------------------------------------------------------------------------
 # label / str
 # ---------------------------------------------------------------------------
@@ -104,6 +109,22 @@ def test_severity_at_least_above():
 
 def test_severity_at_least_below():
     assert severity_at_least(LOW, HIGH) is False
+
+
+@pytest.mark.parametrize(
+    "severity, minimum, expected",
+    [
+        (LOW, LOW, True),
+        (MEDIUM, LOW, True),
+        (HIGH, HIGH, True),
+        (CRITICAL, HIGH, True),
+        (LOW, MEDIUM, False),
+        (MEDIUM, CRITICAL, False),
+    ],
+)
+def test_severity_at_least_parametrized(severity, minimum, expected):
+    """Parametrized coverage of severity_at_least across multiple combinations."""
+    assert severity_at_least(severity, minimum) is expected
 
 
 # ---------------------------------------------------------------------------
