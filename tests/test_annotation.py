@@ -52,6 +52,15 @@ def test_as_dict_contains_expected_keys():
     assert d["annotations"]["note"] == "test"
 
 
+def test_as_dict_includes_match_fields():
+    """Ensure as_dict propagates all core Match fields, not just pattern_name and value."""
+    m = _make_match(offset=42, severity="critical")
+    am = annotate_match(m)
+    d = am.as_dict()
+    assert d.get("offset") == 42
+    assert d.get("severity") == "critical"
+
+
 def test_annotate_matches_bulk():
     matches = [_make_match(offset=i) for i in range(4)]
     annotated = annotate_matches(matches, source="dump")
